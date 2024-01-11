@@ -1,5 +1,14 @@
-const name: string = 'Dư Thanh Được'
-type Handle = () => Promise<string>
+import express from 'express'
+const app = express()
+const port = 3000
+import usersRouter from './routes/users.routes'
+import databaseService from './services/database.services'
 
-const handle: Handle = async () => Promise.resolve(name)
-handle().then(console.log)
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use('/user', usersRouter)
+
+databaseService.connect()
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
