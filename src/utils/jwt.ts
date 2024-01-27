@@ -3,7 +3,7 @@ import { TokenPayload } from '~/models/requests/User.requests'
 
 export const signToken = ({
   payload,
-  privateKey = process.env.JWT_SECRET as string,
+  privateKey = process.env.JWT_SECRET_ACCESS_TOKEN as string,
   options = {
     algorithm: 'HS256'
   }
@@ -24,7 +24,7 @@ export const signToken = ({
 
 export const verifyToken = ({
   token,
-  secretOrPublicKey = process.env.JWT_SECRET as string
+  secretOrPublicKey = process.env.JWT_SECRET_ACCESS_TOKEN as string
 }: {
   token: string
   secretOrPublicKey?: string

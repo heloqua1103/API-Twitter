@@ -12,14 +12,14 @@ class UsersService {
   private signAccessToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.AccessToken },
-      options: { expiresIn: process.env.ACCESS_EXPIRE_IN }
+      options: { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
     })
   }
 
   private signRefreshToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.RefreshToken },
-      options: { expiresIn: process.env.REFRESH_EXPIRE_IN }
+      options: { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN }
     })
   }
 
@@ -30,7 +30,7 @@ class UsersService {
   private signEmailVerifyToken(user_id: string, verify: UserVerifyStatus) {
     return signToken({
       payload: { user_id, token_type: TokenType.EmailVerifyToken, verify },
-      privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string,
+      privateKey: process.env.JWT_SECRET_ACCESS_TOKEN_EMAIL_VERIFY_TOKEN as string,
       options: { expiresIn: process.env.EMAIL_VERIFY_EXPIRE_IN }
     })
   }
