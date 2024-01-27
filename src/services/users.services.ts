@@ -35,6 +35,14 @@ class UsersService {
     })
   }
 
+  private signForgotPasswordToken(user_id: string) {
+    return signToken({
+      payload: { user_id, token_type: TokenType.EmailVerifyToken },
+      privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string,
+      options: { expiresIn: process.env.FORGOT_PASSWORD_EXPIRE_IN }
+    })
+  }
+
   private decodeRefreshToken(refreshToken: string) {
     return verifyToken({
       token: refreshToken,
@@ -118,6 +126,21 @@ class UsersService {
     )
     return {
       message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESS
+    }
+  }
+
+  async forgotPassword(user_id: string) {
+    const forgot_password_token = await this.signForgotPasswordToken(user_id)
+    await databaseService.users.updateOne(
+      { _id: new ObjectId(user_id) },
+      {
+        $set: { forgot_password_token },
+        $currentDate: { updated_at: true }
+      }
+    )
+    console.log("forgot password token: ",forgot_password_token)
+    return {
+      message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
     }
   }
 }

@@ -1,6 +1,6 @@
 import { validate } from './../utils/validation'
 import { Request, Response, NextFunction } from 'express'
-import { checkSchema } from 'express-validator'
+import { check, checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
@@ -262,3 +262,24 @@ export const emailVerifyTokenValidator = validate(
   )
 )
 
+export const forgotPasswordValidator = validate(
+  checkSchema(
+    {
+      email: {
+        isEmail: {
+          errorMessage: USERS_MESSAGES.EMAIL_IS_VALID
+        },
+        normalizeEmail: true,
+        trim: true,
+        custom: {
+          options: async (value: any, {req}) => {
+            const user = await databaseService.users.findOne({ email: value })
+            if (!user) throw new Error(USERS_MESSAGES.USER_NOT_FOUND)
+            req.user = user
+            return true
+          }
+        }
+      },
+    }, ['body']
+  )
+)
