@@ -42,8 +42,6 @@ class UsersService {
     })
   }
 
-
-
   async register(payload: RegisterReqBody) {
     const user_id = new ObjectId()
     const emailVerifyToken = await this.signEmailVerifyToken(user_id.toString(), UserVerifyStatus.Unverified)
@@ -105,6 +103,21 @@ class UsersService {
     return {
       access_token,
       refresh_token
+    }
+  }
+
+  async resendVerifyEmail(user_id: string) {
+    const email_verify_token = await this.signEmailVerifyToken(user_id, UserVerifyStatus.Unverified)
+    console.log(email_verify_token)
+    await databaseService.users.updateOne(
+      { _id: new ObjectId(user_id) },
+      {
+        $set: { email_verify_token },
+        $currentDate: { updated_at: true }
+      }
+    )
+    return {
+      message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESS
     }
   }
 }
