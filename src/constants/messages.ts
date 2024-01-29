@@ -42,4 +42,5 @@ export const USERS_MESSAGES = {
   OLD_PASSWORD_NOT_CORRECT: 'Old password not correct',
   RESET_PASSWORD_SUCCESS: 'Reset password success',
   CHANGE_PASSWORD_SUCCESS: 'Change password success',
+  GET_ME_SUCCESS: 'Get me success'
 } as const

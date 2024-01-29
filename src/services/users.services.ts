@@ -64,7 +64,10 @@ class UsersService {
         password: hashPassword(payload.password)
       })
     )
-    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id.toString(), UserVerifyStatus.Unverified)
+    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(
+      user_id.toString(),
+      UserVerifyStatus.Unverified
+    )
     // const { iat = 0, exp = 0 } = await this.decodeRefreshToken(refresh_token)
     await databaseService.refreshTokens.insertOne(
       new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
@@ -170,6 +173,14 @@ class UsersService {
     return {
       message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS
     }
+  }
+
+  async getMe(user_id: string) {
+    const user = await databaseService.users.findOne(
+      { _id: new ObjectId(user_id) },
+      { projection: { password: 0, email_verify_token: 0, forgot_password_token: 0 } }
+    )
+    return user
   }
 }
 
