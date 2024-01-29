@@ -19,7 +19,8 @@ import usersService from '~/services/users.services'
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
   const user = req.user as User
   const user_id = user._id as ObjectId
-  const result = await usersService.login(user_id.toString())
+  const verify = user.verify as UserVerifyStatus
+  const result = await usersService.login(user_id.toString(), verify)
   return res.json({ message: USERS_MESSAGES.LOGIN_SUCCESS, result })
 }
 
@@ -69,7 +70,6 @@ export const forgotPasswordController = async (
   res: Response
 ) => {
   const { _id } = req.user as User
-  console.log(_id)
   const result = await usersService.forgotPassword((_id as ObjectId).toString())
   return res.json(result)
 }
@@ -82,15 +82,15 @@ export const verifyForgotPasswordController = async (
 }
 
 export const resetPasswordController = async (req: Request, res: Response) => {
-  const { user_id } = req.decode_authorization as TokenPayload
+  const { user_id } = req.decode_forgot_password_token as TokenPayload
   const { password } = req.body
   const result = await usersService.resetPassword(user_id, password)
   return res.json(result)
 }
 
-// export const changePasswordController = async (req: Request, res: Response) => {
-//   const {user_id} = req.decode_authorization as TokenPayload
-//   const {password} = req.body
-//   const result = await usersService.changePassword(user_id, password)
-//   return res.json(result)
-// }
+export const changePasswordController = async (req: Request, res: Response) => {
+  const { user_id } = req.decode_authorization as TokenPayload
+  const { password } = req.body
+  const result = await usersService.changePassword(user_id, password)
+  return res.json(result)
+}

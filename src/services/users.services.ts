@@ -9,22 +9,24 @@ import { ObjectId } from 'mongodb'
 import { USERS_MESSAGES } from '~/constants/messages'
 
 class UsersService {
-  private signAccessToken(user_id: string) {
+  private signAccessToken(user_id: string, verify: UserVerifyStatus) {
     return signToken({
-      payload: { user_id, token_type: TokenType.AccessToken },
+      payload: { user_id, token_type: TokenType.AccessToken, verify },
+      privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
       options: { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
     })
   }
 
-  private signRefreshToken(user_id: string) {
+  private signRefreshToken(user_id: string, verify: UserVerifyStatus) {
     return signToken({
-      payload: { user_id, token_type: TokenType.RefreshToken },
+      payload: { user_id, token_type: TokenType.RefreshToken, verify },
+      privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
       options: { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN }
     })
   }
 
-  private signAccessAndRefreshToken(user_id: string) {
-    return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
+  private signAccessAndRefreshToken(user_id: string, verify: UserVerifyStatus) {
+    return Promise.all([this.signAccessToken(user_id, verify), this.signRefreshToken(user_id, verify)])
   }
 
   private signEmailVerifyToken(user_id: string, verify: UserVerifyStatus) {
@@ -62,7 +64,7 @@ class UsersService {
         password: hashPassword(payload.password)
       })
     )
-    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id.toString())
+    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id.toString(), UserVerifyStatus.Unverified)
     // const { iat = 0, exp = 0 } = await this.decodeRefreshToken(refresh_token)
     await databaseService.refreshTokens.insertOne(
       new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
@@ -81,8 +83,8 @@ class UsersService {
     return Boolean(user)
   }
 
-  async login(user_id: string) {
-    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
+  async login(user_id: string, verify: UserVerifyStatus) {
+    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id, verify)
     await databaseService.refreshTokens.insertOne(
       new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
     )
@@ -98,7 +100,7 @@ class UsersService {
 
   async verifyEmail(user_id: string) {
     const [token] = await Promise.all([
-      this.signAccessAndRefreshToken(user_id),
+      this.signAccessAndRefreshToken(user_id, UserVerifyStatus.Verified),
       databaseService.users.updateOne(
         { _id: new ObjectId(user_id) },
         {
@@ -138,7 +140,7 @@ class UsersService {
         $currentDate: { updated_at: true }
       }
     )
-    console.log("forgot password token: ",forgot_password_token)
+    console.log('forgot password token: ', forgot_password_token)
     return {
       message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
     }
@@ -157,18 +159,18 @@ class UsersService {
     }
   }
 
-  // async changePassword(user_id: string, password: string) {
-  //   await databaseService.users.updateOne(
-  //     { _id: new ObjectId(user_id) },
-  //     {
-  //       $set: { password: hashPassword(password) },
-  //       $currentDate: { updated_at: true }
-  //     }
-  //   )
-  //   return {
-  //     message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS
-  //   }
-  // }
+  async changePassword(user_id: string, password: string) {
+    await databaseService.users.updateOne(
+      { _id: new ObjectId(user_id) },
+      {
+        $set: { password: hashPassword(password) },
+        $currentDate: { updated_at: true }
+      }
+    )
+    return {
+      message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS
+    }
+  }
 }
 
 const usersService = new UsersService()

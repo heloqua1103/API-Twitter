@@ -41,4 +41,5 @@ export const USERS_MESSAGES = {
   PASSWORD_LENGTH_FROM_6_TO_20: 'Password length must be between 6 and 20',
   OLD_PASSWORD_NOT_CORRECT: 'Old password not correct',
   RESET_PASSWORD_SUCCESS: 'Reset password success',
+  CHANGE_PASSWORD_SUCCESS: 'Change password success',
 } as const

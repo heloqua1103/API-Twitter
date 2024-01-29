@@ -69,6 +69,7 @@ const forgotPasswordTokenSchema: ParamSchema = {
             message: USERS_MESSAGES.INVALID_FORGOT_PASSWORD_TOKEN,
             status: HTTP_STATUS.UNAUTHORIZED
           })
+        req.decode_forgot_password_token = decode_forgot_password_token
       } catch (error) {
         if (error instanceof JsonWebTokenError) {
           throw new ErrorWithStatus({
@@ -77,6 +78,40 @@ const forgotPasswordTokenSchema: ParamSchema = {
           })
         }
         throw error
+      }
+      return true
+    }
+  }
+}
+
+const confirmPasswordSchema: ParamSchema = {
+  notEmpty: {
+    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED
+  },
+  isLength: {
+    options: {
+      min: 6,
+      max: 255
+    },
+    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_LENGTH_MUST_BE_BETWEEN_6_AND_255
+  },
+  isString: {
+    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_STRING
+  },
+  isStrongPassword: {
+    options: {
+      minLength: 6,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1
+    },
+    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_STRONG
+  },
+  custom: {
+    options: (value: any, { req }: any) => {
+      if (value !== req.body.password) {
+        throw new Error(USERS_MESSAGES.CONFIRM_PASSWORD_DO_NOT_EQUAL_TO_PASSWORD)
       }
       return true
     }
@@ -141,39 +176,7 @@ export const registerValidator = validate(
         }
       },
       password: passwordSchema,
-      confirm_password: {
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED
-        },
-        isLength: {
-          options: {
-            min: 6,
-            max: 255
-          },
-          errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_LENGTH_MUST_BE_BETWEEN_6_AND_255
-        },
-        isString: {
-          errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_STRING
-        },
-        isStrongPassword: {
-          options: {
-            minLength: 6,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            minSymbols: 1
-          },
-          errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_STRONG
-        },
-        custom: {
-          options: (value: any, { req }: any) => {
-            if (value !== req.body.password) {
-              throw new Error(USERS_MESSAGES.CONFIRM_PASSWORD_DO_NOT_EQUAL_TO_PASSWORD)
-            }
-            return true
-          }
-        }
-      },
+      confirm_password: confirmPasswordSchema,
       date_of_birth: {
         isISO8601: {
           options: { strict: true, strictSeparator: true },
@@ -312,7 +315,9 @@ export const forgotPasswordValidator = validate(
 export const resetPasswordValidator = validate(
   checkSchema(
     {
-      forgot_password_token: forgotPasswordTokenSchema
+      forgot_password_token: forgotPasswordTokenSchema,
+      password: passwordSchema,
+      confirm_password: confirmPasswordSchema
     },
     ['body']
   )
@@ -357,7 +362,8 @@ export const changePasswordValidator = validate(
             return true
           }
         }
-      }
+      },
+      password: passwordSchema,
     },
     ['body']
   )
