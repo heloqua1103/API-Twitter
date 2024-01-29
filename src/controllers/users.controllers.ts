@@ -9,6 +9,7 @@ import {
   LogoutReqBody,
   RegisterReqBody,
   TokenPayload,
+  UpdateMeReqBody,
   VerifyEmailRequestBody,
   VerifyForgotPasswordReqBody
 } from '~/models/requests/User.requests'
@@ -69,8 +70,8 @@ export const forgotPasswordController = async (
   req: Request<ParamsDictionary, any, ForgotPasswordReqBody>,
   res: Response
 ) => {
-  const { _id } = req.user as User
-  const result = await usersService.forgotPassword((_id as ObjectId).toString())
+  const { _id, verify } = req.user as User
+  const result = await usersService.forgotPassword((_id as ObjectId).toString(), verify)
   return res.json(result)
 }
 
@@ -99,4 +100,10 @@ export const getMeController = async (req: Request, res: Response) => {
   const { user_id } = req.decode_authorization as TokenPayload
   const result = await usersService.getMe(user_id)
   return res.json({ message: USERS_MESSAGES.GET_ME_SUCCESS, result })
+}
+
+export const updateMeController = async (req: Request<ParamsDictionary, any, UpdateMeReqBody>, res: Response) => {
+  const { user_id } = req.decode_authorization as TokenPayload
+  const result = await usersService.updateMe(user_id, req.body)
+  res.json({ message: USERS_MESSAGES.UPDATE_ME_SUCCESS, result })
 }

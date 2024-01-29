@@ -42,5 +42,16 @@ export const USERS_MESSAGES = {
   OLD_PASSWORD_NOT_CORRECT: 'Old password not correct',
   RESET_PASSWORD_SUCCESS: 'Reset password success',
   CHANGE_PASSWORD_SUCCESS: 'Change password success',
-  GET_ME_SUCCESS: 'Get me success'
+  GET_ME_SUCCESS: 'Get me success',
+  BIO_MUST_BE_STRING: 'Bio must be a string',
+  BIO_LENGTH_MUST_BE_BETWEEN_1_AND_200: 'Bio length must be between 1 and 200',
+  LOCATION_MUST_BE_STRING: 'Location must be a string',
+  LOCATION_LENGTH_MUST_BE_BETWEEN_1_AND_200: 'Location length must be between 1 and 200',
+  WEBSITE_MUST_BE_STRING: 'Website must be a string',
+  WEBSITE_LENGTH_MUST_BE_BETWEEN_1_AND_200: 'Website length must be between 1 and 200',
+  USERNAME_MUST_BE_STRING: 'Username must be a string',
+  USERNAME_LENGTH_MUST_BE_BETWEEN_1_AND_200: 'Username length must be between 1 and 200',
+  IMAGE_MUST_BE_STRING: 'Image must be a string',
+  IMAGE_LENGTH_MUST_BE_BETWEEN_1_AND_400: 'Image length must be between 1 and 400',
+  UPDATE_ME_SUCCESS: 'Update me success',
 } as const

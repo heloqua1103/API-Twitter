@@ -7,6 +7,7 @@ import {
   refreshTokenValidator,
   registerValidator,
   resetPasswordValidator,
+  updateMeValidator,
   verifiedUserValidator,
   verifyForgotPasswordValidator
 } from './../middlewares/users.middlewares'
@@ -21,7 +22,8 @@ import {
   verifyForgotPasswordController,
   resetPasswordController,
   changePasswordController,
-  getMeController
+  getMeController,
+  updateMeController
 } from '~/controllers/users.controllers'
 import { loginValidator } from '~/middlewares/users.middlewares'
 const usersRouter = Router()
@@ -46,5 +48,12 @@ usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapReq
 usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(verifyEmailController))
 usersRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
 usersRouter.get('/get-me', accessTokenValidator, wrapRequestHandler(getMeController))
+usersRouter.patch(
+  '/update-me',
+  accessTokenValidator,
+  verifiedUserValidator,
+  updateMeValidator,
+  wrapRequestHandler(updateMeController)
+)
 
 export default usersRouter

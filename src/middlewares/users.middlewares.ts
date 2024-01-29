@@ -118,6 +118,39 @@ const confirmPasswordSchema: ParamSchema = {
   }
 }
 
+const nameSchema: ParamSchema = {
+  isString: {
+    errorMessage: USERS_MESSAGES.NAME_MUST_BE_STRING
+  },
+  notEmpty: {
+    errorMessage: USERS_MESSAGES.NAME_IS_REQUIRED
+  },
+  isLength: {
+    options: { min: 1, max: 255 },
+    errorMessage: USERS_MESSAGES.NAME_LENGTH_MUST_BE_BETWEEN_1_AND_255
+  },
+  trim: true
+}
+
+const dateOfBirthSchema: ParamSchema = {
+  isISO8601: {
+    options: { strict: true, strictSeparator: true },
+    errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_IS_ISO8601
+  }
+}
+
+const imageSchema: ParamSchema = {
+  optional: true,
+  trim: true,
+  isString: {
+    errorMessage: USERS_MESSAGES.IMAGE_MUST_BE_STRING
+  },
+  isLength: {
+    options: { min: 0, max: 400 },
+    errorMessage: USERS_MESSAGES.IMAGE_LENGTH_MUST_BE_BETWEEN_1_AND_400
+  }
+}
+
 export const loginValidator = validate(
   checkSchema(
     {
@@ -148,19 +181,7 @@ export const loginValidator = validate(
 export const registerValidator = validate(
   checkSchema(
     {
-      name: {
-        isString: {
-          errorMessage: USERS_MESSAGES.NAME_MUST_BE_STRING
-        },
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.NAME_IS_REQUIRED
-        },
-        isLength: {
-          options: { min: 1, max: 255 },
-          errorMessage: USERS_MESSAGES.NAME_LENGTH_MUST_BE_BETWEEN_1_AND_255
-        },
-        trim: true
-      },
+      name: nameSchema,
       email: {
         isEmail: {
           errorMessage: USERS_MESSAGES.EMAIL_IS_VALID
@@ -177,12 +198,7 @@ export const registerValidator = validate(
       },
       password: passwordSchema,
       confirm_password: confirmPasswordSchema,
-      date_of_birth: {
-        isISO8601: {
-          options: { strict: true, strictSeparator: true },
-          errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_IS_ISO8601
-        }
-      }
+      date_of_birth: dateOfBirthSchema
     },
     ['body']
   )
@@ -363,7 +379,70 @@ export const changePasswordValidator = validate(
           }
         }
       },
-      password: passwordSchema,
+      password: passwordSchema
+    },
+    ['body']
+  )
+)
+
+export const updateMeValidator = validate(
+  checkSchema(
+    {
+      name: {
+        ...nameSchema,
+        optional: true,
+        notEmpty: undefined
+      },
+      date_of_birth: {
+        ...dateOfBirthSchema,
+        optional: true
+      },
+      bio: {
+        optional: true,
+        isString: {
+          errorMessage: USERS_MESSAGES.BIO_MUST_BE_STRING
+        },
+        trim: true,
+        isLength: {
+          options: { min: 0, max: 200 },
+          errorMessage: USERS_MESSAGES.BIO_LENGTH_MUST_BE_BETWEEN_1_AND_200
+        }
+      },
+      location: {
+        optional: true,
+        isString: {
+          errorMessage: USERS_MESSAGES.LOCATION_MUST_BE_STRING
+        },
+        trim: true,
+        isLength: {
+          options: { min: 0, max: 200 },
+          errorMessage: USERS_MESSAGES.LOCATION_LENGTH_MUST_BE_BETWEEN_1_AND_200
+        }
+      },
+      website: {
+        optional: true,
+        isString: {
+          errorMessage: USERS_MESSAGES.WEBSITE_MUST_BE_STRING
+        },
+        trim: true,
+        isLength: {
+          options: { min: 0, max: 200 },
+          errorMessage: USERS_MESSAGES.WEBSITE_LENGTH_MUST_BE_BETWEEN_1_AND_200
+        }
+      },
+      username: {
+        optional: true,
+        isString: {
+          errorMessage: USERS_MESSAGES.USERNAME_MUST_BE_STRING
+        },
+        trim: true,
+        isLength: {
+          options: { min: 0, max: 200 },
+          errorMessage: USERS_MESSAGES.USERNAME_LENGTH_MUST_BE_BETWEEN_1_AND_200
+        }
+      },
+      avatar: imageSchema,
+      cover_photo: imageSchema
     },
     ['body']
   )

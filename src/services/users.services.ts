@@ -1,6 +1,6 @@
 import User from '~/models/schemas/User.schema'
 import databaseService from './database.services'
-import { RegisterReqBody } from '~/models/requests/User.requests'
+import { RegisterReqBody, UpdateMeReqBody } from '~/models/requests/User.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken, verifyToken } from '~/utils/jwt'
 import { TokenType, UserVerifyStatus } from '~/constants/enum'
@@ -37,9 +37,9 @@ class UsersService {
     })
   }
 
-  private signForgotPasswordToken(user_id: string) {
+  private signForgotPasswordToken(user_id: string, verify: UserVerifyStatus) {
     return signToken({
-      payload: { user_id, token_type: TokenType.EmailVerifyToken },
+      payload: { user_id, token_type: TokenType.EmailVerifyToken, verify },
       privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string,
       options: { expiresIn: process.env.FORGOT_PASSWORD_EXPIRE_IN }
     })
@@ -134,8 +134,8 @@ class UsersService {
     }
   }
 
-  async forgotPassword(user_id: string) {
-    const forgot_password_token = await this.signForgotPasswordToken(user_id)
+  async forgotPassword(user_id: string, verify: UserVerifyStatus) {
+    const forgot_password_token = await this.signForgotPasswordToken(user_id, verify)
     await databaseService.users.updateOne(
       { _id: new ObjectId(user_id) },
       {
@@ -181,6 +181,16 @@ class UsersService {
       { projection: { password: 0, email_verify_token: 0, forgot_password_token: 0 } }
     )
     return user
+  }
+
+  async updateMe(user_id: string, payload: UpdateMeReqBody) {
+    const _payload = payload.date_of_birth ? { ...payload, date_of_birth: new Date(payload.date_of_birth) } : payload
+    const result = await databaseService.users.findOneAndUpdate(
+      { _id: new ObjectId(user_id) },
+      { $set: { ...(_payload as UpdateMeReqBody & { date_of_birth: Date }) }, $currentDate: { updated_at: true } },
+      { returnDocument: 'after', projection: { password: 0, email_verify_token: 0, forgot_password_token: 0 } }
+    )
+    return result
   }
 }
 

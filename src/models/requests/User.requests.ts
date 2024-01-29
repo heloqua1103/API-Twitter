@@ -1,6 +1,16 @@
 import { JwtPayload } from 'jsonwebtoken'
 import { TokenType, UserVerifyStatus } from '~/constants/enum'
 
+export interface UpdateMeReqBody {
+  name?: string
+  date_of_birth?: string
+  avatar?: string
+  location?: string
+  website?: string
+  username?: string
+  cover_photo?: string
+  bio?: string
+}
 export interface LoginReqBody {
   email: string
   password: string
