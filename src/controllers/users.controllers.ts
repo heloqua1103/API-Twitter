@@ -1,9 +1,11 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { pick } from 'lodash'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enum'
 import { USERS_MESSAGES } from '~/constants/messages'
 import {
+  FollowReqBody,
   ForgotPasswordReqBody,
   LoginReqBody,
   LogoutReqBody,
@@ -104,6 +106,14 @@ export const getMeController = async (req: Request, res: Response) => {
 
 export const updateMeController = async (req: Request<ParamsDictionary, any, UpdateMeReqBody>, res: Response) => {
   const { user_id } = req.decode_authorization as TokenPayload
-  const result = await usersService.updateMe(user_id, req.body)
+  const body = req.body
+  const result = await usersService.updateMe(user_id, body)
   res.json({ message: USERS_MESSAGES.UPDATE_ME_SUCCESS, result })
+}
+
+export const followController = async (req: Request<ParamsDictionary, any, FollowReqBody>, res: Response) => {
+  const { user_id } = req.decode_authorization as TokenPayload
+  const { followed_user_id } = req.body
+  const result = await usersService.follow(user_id, followed_user_id)
+  return res.json(result)
 }
