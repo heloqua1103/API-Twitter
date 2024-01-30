@@ -79,7 +79,7 @@ usersRouter.post(
   wrapRequestHandler(followController)
 )
 usersRouter.delete(
-  '/unfollow',
+  '/follow/:user_id',
   accessTokenValidator,
   verifiedUserValidator,
   unFollowValidator,

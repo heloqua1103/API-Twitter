@@ -15,6 +15,11 @@ export interface UpdateMeReqBody {
 export interface FollowReqBody {
   followed_user_id: string
 }
+
+export interface UnFollowReqBody {
+  followed_user_id: string
+}
+
 export interface LoginReqBody {
   email: string
   password: string

@@ -11,6 +11,7 @@ import {
   LogoutReqBody,
   RegisterReqBody,
   TokenPayload,
+  UnFollowReqBody,
   UpdateMeReqBody,
   VerifyEmailRequestBody,
   VerifyForgotPasswordReqBody
@@ -118,9 +119,9 @@ export const followController = async (req: Request<ParamsDictionary, any, Follo
   return res.json(result)
 }
 
-export const unFollowController = async (req: Request<ParamsDictionary, any, FollowReqBody>, res: Response) => {
+export const unFollowController = async (req: Request<ParamsDictionary, any, UnFollowReqBody>, res: Response) => {
   const { user_id } = req.decode_authorization as TokenPayload
-  const { followed_user_id } = req.body
+  const { followed_user_id } = req.params
   const result = await usersService.unFollow(user_id, followed_user_id)
   return res.json(result)
 }
