@@ -27,7 +27,8 @@ import {
   getMeController,
   updateMeController,
   followController,
-  unFollowController
+  unFollowController,
+  oauthController
 } from '~/controllers/users.controllers'
 import { loginValidator } from '~/middlewares/users.middlewares'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
@@ -85,5 +86,7 @@ usersRouter.delete(
   unFollowValidator,
   wrapRequestHandler(unFollowController)
 )
+
+usersRouter.get('/oauth/google', wrapRequestHandler(oauthController))
 
 export default usersRouter

@@ -1,3 +1,4 @@
+import { config } from 'dotenv'
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { pick } from 'lodash'
@@ -19,6 +20,7 @@ import {
 import User from '~/models/schemas/User.schema'
 import databaseService from '~/services/database.services'
 import usersService from '~/services/users.services'
+config()
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
   const user = req.user as User
@@ -124,4 +126,14 @@ export const unFollowController = async (req: Request<ParamsDictionary, any, UnF
   const { followed_user_id } = req.params
   const result = await usersService.unFollow(user_id, followed_user_id)
   return res.json(result)
+}
+
+export const oauthController = async (req: Request, res: Response) => {
+  const { code } = req.query
+  const result = await usersService.oauthGoogle(code as string)
+  const urlRedirect = `${process.env.CLIENT_REDIRECT_URI as string}?access_token=${result.access_token}&refresh_token=${
+    result.refresh_token
+  }&new_user=${result.newUser}&verify=${result.verify}
+  }`
+  return res.redirect(urlRedirect)
 }

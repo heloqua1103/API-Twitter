@@ -60,5 +60,8 @@ export const USERS_MESSAGES = {
   UNFOLLOW_SUCCESS: 'Unfollow success',
   USERNAME_IS_INVALID: 'Username is invalid',
   USERNAME_ALREADY_EXISTS: 'Username already exists',
-  ALREADY_UNFOLLOWED: 'Already unfollowed'
+  ALREADY_UNFOLLOWED: 'Already unfollowed',
+  OAUTH_GOOGLE_FAILED: 'OAuth Google failed',
+  OAUTH_REGISTER_SUCCESS: 'OAuth register success',
+  OAUTH_LOGIN_SUCCESS: 'OAuth login success'
 } as const
