@@ -28,7 +28,8 @@ import {
   updateMeController,
   followController,
   unFollowController,
-  oauthController
+  oauthController,
+  refreshTokenController
 } from '~/controllers/users.controllers'
 import { loginValidator } from '~/middlewares/users.middlewares'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
@@ -37,6 +38,7 @@ const usersRouter = Router()
 
 usersRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
 usersRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
+usersRouter.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
 usersRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
 usersRouter.post('/reset-password', resetPasswordValidator, wrapRequestHandler(resetPasswordController))
 usersRouter.post(

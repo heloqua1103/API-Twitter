@@ -64,5 +64,6 @@ export const USERS_MESSAGES = {
   OAUTH_GOOGLE_FAILED: 'OAuth Google failed',
   OAUTH_REGISTER_SUCCESS: 'OAuth register success',
   OAUTH_LOGIN_SUCCESS: 'OAuth login success',
-  UPLOAD_SUCCESS: 'Upload success'
+  UPLOAD_SUCCESS: 'Upload success',
+  REFRESH_TOKEN_SUCCESS: 'Refresh token success'
 } as const

@@ -10,6 +10,7 @@ import {
   ForgotPasswordReqBody,
   LoginReqBody,
   LogoutReqBody,
+  RefreshTokenReqBody,
   RegisterReqBody,
   TokenPayload,
   UnFollowReqBody,
@@ -136,4 +137,17 @@ export const oauthController = async (req: Request, res: Response) => {
   }&new_user=${result.newUser}&verify=${result.verify}
   }`
   return res.redirect(urlRedirect)
+}
+
+export const refreshTokenController = async (
+  req: Request<ParamsDictionary, any, RefreshTokenReqBody>,
+  res: Response
+) => {
+  const refresh_token = req.body.refresh_token
+  const { user_id, verify } = req.decode_refresh_token as TokenPayload
+  const result = await usersService.refreshToken({ user_id, verify, refresh_token })
+  return res.json({
+    message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
+    result
+  })
 }
