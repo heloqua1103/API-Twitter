@@ -42,9 +42,9 @@ export const serveVideoStreamController = async (req: Request, res: Response) =>
   const start = Number(range.replace(/\D/g, ''))
 
   // Vi tri ket thuc cua phan doan
-  const end = Math.min(start + chunkSize, videoSize)
+  const end = Math.min(start + chunkSize, videoSize - 1)
 
-  const contentLength = end - start
+  const contentLength = end - start + 1
   const contentType = mime.lookup(videoPath) || 'video/*'
   const headers = {
     'Content-Range': `bytes ${start}-${end}/${videoSize}`,
