@@ -7,7 +7,7 @@ import { initFoler } from './utils/file'
 import argv from 'minimist'
 import { config } from 'dotenv'
 import path from 'path'
-import { UPLOAD_IMAGE_DIR } from './constants/dir'
+import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
 config()
 
@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/user', usersRouter)
 app.use('/media', mediasRouter)
 app.use('/static', staticRouter)
+app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
 initFoler()
 
