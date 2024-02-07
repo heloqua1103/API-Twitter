@@ -26,7 +26,12 @@ app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
 initFoler()
 
-databaseService.connect()
+databaseService.connect().then(() => {
+  databaseService.indexUsers()
+  databaseService.indexRefreshTokens()
+  databaseService.indexVideoStatus()
+  databaseService.indexFollowers()
+})
 
 app.use(defaultErrorHandler)
 

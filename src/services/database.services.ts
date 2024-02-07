@@ -41,6 +41,37 @@ class DatabaseService {
   get videoStatus(): Collection<VideoStatus> {
     return this.db.collection(process.env.DB_VIDEOSTATUS_COLLECTION as string)
   }
+
+  async indexUsers() {
+    const exist = await this.users.indexExists(['email_1_password_1', 'email_1', 'username_1'])
+    if (!exist) {
+      this.users.createIndex({ email: 1, password: 1 })
+      this.users.createIndex({ email: 1 }, { unique: true })
+      this.users.createIndex({ username: 1 }, { unique: true })
+    }
+  }
+
+  async indexRefreshTokens() {
+    const exist = await this.refreshTokens.indexExists(['token_1', 'exp_1'])
+    if (!exist) {
+      this.refreshTokens.createIndex({ token: 1 })
+      this.refreshTokens.createIndex({ exp: 1 }, { expireAfterSeconds: 0 })
+    }
+  }
+
+  async indexFollowers() {
+    const exist = await this.followers.indexExists(['user_id_1_followed_user_id_1'])
+    if (!exist) {
+      this.followers.createIndex({ user_id: 1, followed_user_id: 1 })
+    }
+  }
+
+  indexVideoStatus() {
+    const exist = this.videoStatus.indexExists(['name_1'])
+    if (!exist) {
+      this.videoStatus.createIndex({ name: 1 })
+    }
+  }
 }
 
 //  Tạo object từ class DatabaseService
