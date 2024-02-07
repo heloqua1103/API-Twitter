@@ -9,13 +9,14 @@ import { config } from 'dotenv'
 import path from 'path'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
+import cors from 'cors'
 config()
 
 const app = express()
 const port = process.env.PORT || 4000
 
 // app.use('/static', express.static(path.resolve(UPLOAD_IMAGE_DIR)))
-
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use('/user', usersRouter)

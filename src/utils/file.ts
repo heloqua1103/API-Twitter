@@ -48,10 +48,17 @@ export const getNameFromFullName = (fullname: string) => {
 }
 
 export const handleUploadVideo = async (req: Request) => {
+  const nanoId = (await import('nanoid')).nanoid
+  const idName = nanoId()
+  const folderpath = path.resolve(UPLOAD_VIDEO_DIR, idName)
+  fs.mkdirSync(folderpath, { recursive: true })
   const form = formidable({
-    uploadDir: UPLOAD_VIDEO_DIR,
+    uploadDir: folderpath,
     maxFiles: 1,
     maxFieldsSize: 50 * 1024 * 1024,
+    filename: function () {
+      return idName
+    },
     filter: function ({ name, originalFilename, mimetype }) {
       const valid = name === 'video' && Boolean(mimetype?.includes('mp4') || mimetype?.includes('quicktime'))
       if (!valid) {
@@ -73,6 +80,7 @@ export const handleUploadVideo = async (req: Request) => {
         const ext = getExtension(video.originalFilename as string)
         fs.renameSync(video.filepath, video.filepath + '.' + ext)
         video.newFilename = video.newFilename + '.' + ext
+        video.filepath = video.filepath + '.' + ext
       })
       resolve(files.video as File[])
     })

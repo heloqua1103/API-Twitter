@@ -15,7 +15,24 @@ export const uploadImageController = async (req: Request, res: Response) => {
 export const serveImageController = async (req: Request, res: Response) => {
   const { name } = req.params
   return res.sendFile(path.resolve(UPLOAD_IMAGE_DIR, name), (err) => {
-    console.log(err)
+    if (err) {
+      res.status((err as any).status).send(err.message)
+    }
+  })
+}
+
+export const serveSegmentController = async (req: Request, res: Response) => {
+  const { id, v, segment } = req.params
+  return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, v, segment), (err) => {
+    if (err) {
+      res.status((err as any).status).send(err.message)
+    }
+  })
+}
+
+export const serveM3u8Controller = async (req: Request, res: Response) => {
+  const { id } = req.params
+  return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, 'master.m3u8'), (err) => {
     if (err) {
       res.status((err as any).status).send(err.message)
     }
@@ -60,4 +77,15 @@ export const serveVideoStreamController = async (req: Request, res: Response) =>
 export const uploadVideoController = async (req: Request, res: Response) => {
   const url = await mediasService.uploadVideo(req)
   return res.json({ result: url, message: USERS_MESSAGES.UPLOAD_SUCCESS })
+}
+
+export const uploadVideoHLSController = async (req: Request, res: Response) => {
+  const url = await mediasService.uploadVideoHLS(req)
+  return res.json({ result: url, message: USERS_MESSAGES.UPLOAD_SUCCESS })
+}
+
+export const videoStatusController = async (req: Request, res: Response) => {
+  const { id } = req.params
+  const result = await mediasService.getVideoStatus(id as string)
+  return res.json({ result: result, message: USERS_MESSAGES.GET_VIDEO_STATUS_SUCCESS })
 }
