@@ -6,3 +6,4 @@ export const filterMiddleware = <T>(filterKeys: FilterKeys<T>) => (req: Request,
   req.body = pick(req.body, filterKeys)
   next()
 }
+

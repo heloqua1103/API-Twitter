@@ -10,6 +10,7 @@ import path from 'path'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
 import cors from 'cors'
+import tweetsRouter from './routes/tweets.routes'
 config()
 
 const app = express()
@@ -21,12 +22,14 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use('/user', usersRouter)
 app.use('/media', mediasRouter)
+app.use('/tweet', tweetsRouter)
 app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
 initFoler()
 
-databaseService.connect().then(() => {
+databaseService.connect()
+.then(() => {
   databaseService.indexUsers()
   databaseService.indexRefreshTokens()
   databaseService.indexVideoStatus()

@@ -4,6 +4,7 @@ import User from '~/models/schemas/User.schema'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import Follower from '~/models/schemas/Follower.schema'
 import VideoStatus from '~/models/schemas/Videos.schema'
+import Tweet from '~/models/schemas/Tweet.schema'
 dotenv.config()
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.kc2kifh.mongodb.net/?retryWrites=true&w=majority`
@@ -42,6 +43,10 @@ class DatabaseService {
     return this.db.collection(process.env.DB_VIDEOSTATUS_COLLECTION as string)
   }
 
+  get tweets(): Collection<Tweet> {
+    return this.db.collection(process.env.DB_TWEET_COLLECTION as string)
+  }
+
   async indexUsers() {
     const exist = await this.users.indexExists(['email_1_password_1', 'email_1', 'username_1'])
     if (!exist) {
@@ -66,8 +71,8 @@ class DatabaseService {
     }
   }
 
-  indexVideoStatus() {
-    const exist = this.videoStatus.indexExists(['name_1'])
+  async indexVideoStatus() {
+    const exist = await this.videoStatus.indexExists(['name_1'])
     if (!exist) {
       this.videoStatus.createIndex({ name: 1 })
     }
