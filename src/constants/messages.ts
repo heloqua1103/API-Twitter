@@ -69,7 +69,6 @@ export const USERS_MESSAGES = {
   GET_VIDEO_STATUS_SUCCESS: 'Get video status success'
 } as const
 
-
 export const TWEET_MESSAGES = {
   INVALID_TWEET_TYPE: 'Invalid tweet type',
   INVALID_TWEET_AUDIENCE: 'Invalid tweet audience',
@@ -79,5 +78,9 @@ export const TWEET_MESSAGES = {
   CONTENT_MUST_BE_EMPTY: 'Content must be empty',
   HASHTAGS_MUST_BE_STRING_ARRAY: 'Hashtags must be string array',
   MENTIONS_MUST_BE_STRING_ARRAY: 'Mentions must be string array',
-  MEDIAS_MUST_BE_ARRAY_OF_OBJECTS_WITH_URL_AND_TYPE: 'Medias must be array of objects with url and type',
+  MEDIAS_MUST_BE_ARRAY_OF_OBJECTS_WITH_URL_AND_TYPE: 'Medias must be array of objects with url and type'
 } as const
+
+export const BOOKMARK_MESSAGES = {
+  BOOKMARK_SUCCESS: 'Bookmark success'
+}
